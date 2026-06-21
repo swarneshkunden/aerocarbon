@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// User model with password authentication
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  name          String?
+  passwordHash  String    // bcrypt hashed password
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions      Session[]
+  readings      Reading[]
+  devices       Device[]
+}
+
+// Session model for tracking logged-in users
+model Session {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// Device model for tracking IoT devices
+model Device {
+  id          String    @id @default(cuid())
+  externalId  String    @unique
+  name        String?
+  status      String    // 'online' or 'offline'
+  lastSeen    DateTime?
+  currentPower Float?
+  userId      String?   // Optional: link device to user
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  readings    Reading[]
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+// Reading model for energy readings
+model Reading {
+  id        String    @id @default(cuid())
+  deviceId  String
+  userId    String?   // Optional: can be associated with user if authenticated
+  kwh       Float
+  kgCO2e    Float
+  timestamp DateTime  @default(now())
+
+  device    Device    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  user      User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

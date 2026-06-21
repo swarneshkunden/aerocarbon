@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+**/node_modules/
+
+# environment variables — NEVER commit these
+.env
+.env.local
+.env.*.local
+**/.env
+**/.env.local
+
+# database files
+*.db
+*.db-journal
+**/prisma/dev.db
+**/prisma/*.db
+
+# Next.js build output
+.next/
+**/.next/
+out/
+
+# build artifacts
+dist/
+build/
+
+# logs
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
